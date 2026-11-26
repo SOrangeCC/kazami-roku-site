@@ -305,8 +305,8 @@ export async function fetchUserDynamics(
     const wbi = await getWbiKeys();
     const baseUrl = "https://api.bilibili.com/x/polymer/web-dynamic/v1/feed/space";
     const query = wbi
-      ? encWbi({ host_mid: uid }, wbi.imgKey, wbi.subKey)
-      : `host_mid=${encodeURIComponent(uid)}`;
+      ? encWbi({ host_mid: uid, features: "itemOpusStyle" }, wbi.imgKey, wbi.subKey)
+      : `host_mid=${encodeURIComponent(uid)}&features=itemOpusStyle`;
 
     const res = await fetchWithRetry(`${baseUrl}?${query}`, {
       headers: {

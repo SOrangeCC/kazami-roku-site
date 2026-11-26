@@ -41,24 +41,24 @@ async function main() {
   const items = await fetchUserDynamics(SITE_CONFIG.uid);
   const recent = items.slice(0, 20);
 
-  const isSchedulePost = (item: BiliDynamicItem) =>
-    SCHEDULE_REGEX.test(extractText(item)) && extractPics(item).length > 0;
+  const isSchedulePost = (item: BiliDynamicItem) => {
+    if (extractPics(item).length === 0) return false;
+    const isPinned = Boolean(item.modules?.module_tag?.text?.includes("置顶"));
+    const opusTitle = item.modules?.module_dynamic?.major?.opus?.title || "";
+    if (isPinned) {
+      // Pinned bio posts often mention "课表" in self-intro; only match if title itself is a schedule
+      return SCHEDULE_REGEX.test(opusTitle);
+    }
+    return SCHEDULE_REGEX.test(extractText(item));
+  };
 
-  // 1. Check pinned dynamic only if it also matches the schedule keyword filter
-  let target = recent.find((item) => {
-    const isPinned = item.modules?.module_tag?.text?.includes("置顶");
-    return isPinned && isSchedulePost(item);
-  });
-
-  // 2. Otherwise scan in reverse chronological order for the latest matching post
-  if (!target) {
-    const sorted = [...recent].sort(
-      (a, b) =>
-        (b.modules?.module_author?.pub_ts ?? 0) -
-        (a.modules?.module_author?.pub_ts ?? 0)
-    );
-    target = sorted.find(isSchedulePost);
-  }
+  // Scan in reverse chronological order for the latest matching post
+  const sorted = [...recent].sort(
+    (a, b) =>
+      (b.modules?.module_author?.pub_ts ?? 0) -
+      (a.modules?.module_author?.pub_ts ?? 0)
+  );
+  const target = sorted.find(isSchedulePost);
 
   if (!target) {
     console.log("[sync-weekly-schedule] No matching schedule dynamic found.");
