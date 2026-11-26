@@ -41,6 +41,9 @@ Rules:
 - Infer period from time if not explicit (morning <12:00, afternoon 12:00-18:00, evening >=18:00).
 - Keep titles concise and faithful to the image.`;
 
+const DEFAULT_GEMINI_MODEL = "gemini-3.5-flash-lite";
+const FALLBACK_MODELS = ["gemini-3.0-flash", "gemini-2.5-flash"];
+
 export async function parseScheduleImage(
   imageBuffer: Buffer,
   mimeType = "image/jpeg"
@@ -50,58 +53,78 @@ export async function parseScheduleImage(
     return null;
   }
 
-  try {
-    const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: PROMPT },
-                {
-                  inlineData: {
-                    mimeType,
-                    data: imageBuffer.toString("base64"),
+  const primaryModel =
+    process.env.GEMINI_MODEL?.trim() || DEFAULT_GEMINI_MODEL;
+  const models = Array.from(new Set([primaryModel, ...FALLBACK_MODELS]));
+
+  for (const model of models) {
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  { text: PROMPT },
+                  {
+                    inlineData: {
+                      mimeType,
+                      data: imageBuffer.toString("base64"),
+                    },
                   },
-                },
-              ],
+                ],
+              },
+            ],
+            generationConfig: {
+              responseMimeType: "application/json",
             },
-          ],
-          generationConfig: {
-            responseMimeType: "application/json",
-          },
-        }),
-        signal: AbortSignal.timeout(25000),
+          }),
+          signal: AbortSignal.timeout(25000),
+        }
+      );
+
+      if (!res.ok) {
+        console.warn(
+          `[scheduleParser] Model ${model} returned HTTP ${res.status}, trying next fallback...`
+        );
+        continue;
       }
-    );
 
-    if (!res.ok) {
-      console.warn(`[scheduleParser] Gemini API returned HTTP ${res.status}`);
-      return null;
+      const json = (await res.json()) as {
+        candidates?: Array<{
+          content?: { parts?: Array<{ text?: string }> };
+        }>;
+      };
+
+      const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawText) {
+        console.warn(
+          `[scheduleParser] Model ${model} returned empty text, trying next fallback...`
+        );
+        continue;
+      }
+
+      const parsed = JSON.parse(rawText) as ParsedSchedule;
+      if (!Array.isArray(parsed.days)) {
+        console.warn(
+          `[scheduleParser] Model ${model} returned invalid schema, trying next fallback...`
+        );
+        continue;
+      }
+
+      return {
+        days: parsed.days,
+        note: typeof parsed.note === "string" ? parsed.note : "",
+      };
+    } catch (err) {
+      console.warn(`[scheduleParser] Model ${model} failed:`, err);
     }
-
-    const json = (await res.json()) as {
-      candidates?: Array<{
-        content?: { parts?: Array<{ text?: string }> };
-      }>;
-    };
-
-    const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!rawText) return null;
-
-    const parsed = JSON.parse(rawText) as ParsedSchedule;
-    if (!Array.isArray(parsed.days)) return null;
-    return {
-      days: parsed.days,
-      note: typeof parsed.note === "string" ? parsed.note : "",
-    };
-  } catch (err) {
-    console.warn("[scheduleParser] Failed to parse schedule image:", err);
-    return null;
   }
+
+  return null;
 }
 
 function guessMimeFromPath(filePath: string): string {
