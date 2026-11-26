@@ -1,0 +1,17 @@
+# 每 2 分钟同步开播状态
+*/2 * * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-live-status.ts >> /var/log/roku-sync.log 2>&1
+
+# 每 30 分钟同步 V股行情快照
+*/30 * * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-vstock.ts >> /var/log/roku-sync.log 2>&1
+
+# 每 6 小时同步周表动态
+0 */6 * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-weekly-schedule.ts >> /var/log/roku-sync.log 2>&1
+
+# 每 12 小时同步二创聚合
+30 */12 * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-fan-creations.ts >> /var/log/roku-sync.log 2>&1
+
+# 每日 04:00 同步 StarBot 歌单与 Danmakus 直播统计
+0 4 * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-starbot-songs.ts && docker compose exec -T app npx tsx scripts/sync-danmakus-stats.ts >> /var/log/roku-sync.log 2>&1
+
+# 每日 04:30 热备 SQLite（保留最近 7 天）
+30 4 * * * sqlite3 /opt/kazami-roku-site/data/app.db ".backup '/opt/kazami-roku-site/data/backups/app-$(date +\%F).db'" && find /opt/kazami-roku-site/data/backups -name "app-*.db" -mtime +7 -delete

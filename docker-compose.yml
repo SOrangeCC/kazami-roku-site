@@ -1,0 +1,30 @@
+services:
+  app:
+    image: ghcr.io/sorangecc/kazami-roku-site:latest
+    container_name: kazami-roku-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=file:/app/data/app.db
+      - CACHE_DIR=/app/data/cache
+    volumes:
+      - ./data:/app/data
+    networks:
+      - web
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: kazami-roku-cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - app
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge

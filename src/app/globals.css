@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-paper: #F6FAFE;        /* 主画布：雪白冰蓝 */
+  --bg-surface: #FFFFFF;      /* 卡片/浮层白 */
+  --bg-ice: #D8EAF9;          /* 初雪冰蓝区块底色 */
+  --bg-ribbon: #C9D9F5;       /* 领结长春花蓝：标签/选中底色 */
+  --bg-hair: #EFEDEF;         /* 银灰发丝：次级表面/描边 */
+  --border-frost: #D4E1F0;    /* 分割线 */
+  --text-ink: #3C3A3F;        /* 乐福鞋炭黑：主文字 */
+  --text-secondary: #475569;  /* 次要说明文字 */
+  --accent-primary: #1E40AF;  /* 深钴蓝：链接与高对比交互文字 */
+  --accent-highlight: #3B82F6;/* 冰蓝高亮：开播呼吸灯/进度条 */
+}
+
+[data-theme="dark"] {
+  --bg-paper: #0F172A;
+  --bg-surface: #1E293B;
+  --bg-ice: #172554;
+  --bg-ribbon: #1E3A8A;
+  --bg-hair: #1E293B;
+  --border-frost: #334155;
+  --text-ink: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --accent-primary: #93C5FD;
+  --accent-highlight: #60A5FA;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-paper);
+  color: var(--text-ink);
+  font-family: "Noto Sans SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+@keyframes pulse-live {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.25);
+  }
+}
+
+.animate-live-dot {
+  animation: pulse-live 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

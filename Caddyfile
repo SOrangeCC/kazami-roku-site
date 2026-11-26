@@ -1,0 +1,10 @@
+your-domain.com {
+    encode zstd gzip
+
+    @static_assets {
+        path /_next/static/* /images/* /api/media/*
+    }
+    header @static_assets Cache-Control "public, max-age=86400"
+
+    reverse_proxy app:3000
+}

@@ -1,0 +1,14 @@
+[
+  { "title": "Lemon", "artist": "米津玄師", "language": "日语", "genre": "Pop", "request_tier": "免费", "remark": "非自然死亡主题曲" },
+  { "title": "夜に駆ける", "artist": "YOASOBI", "language": "日语", "genre": "Pop", "request_tier": "免费", "remark": "热门日文" },
+  { "title": "打上花火", "artist": "DAOKO / 米津玄師", "language": "日语", "genre": "ACG", "request_tier": "免费", "remark": "烟花主题曲" },
+  { "title": "晴天", "artist": "周杰伦", "language": "国语", "genre": "Pop", "request_tier": "免费", "remark": "经典华语" },
+  { "title": "小幸运", "artist": "田馥甄", "language": "国语", "genre": "Pop", "request_tier": "免费", "remark": "我的少女时代" },
+  { "title": "鸟之诗", "artist": "Lia", "language": "日语", "genre": "ACG", "request_tier": "免费", "remark": "AIR 主题曲" },
+  { "title": "恋爱サーキュレーション", "artist": "花泽香菜", "language": "日语", "genre": "ACG", "request_tier": "免费", "remark": "化物语" },
+  { "title": "Fly Me to the Moon", "artist": "Frank Sinatra", "language": "英语", "genre": "R&B", "request_tier": "免费", "remark": "爵士/EVA ED" },
+  { "title": "City of Stars", "artist": "Ryan Gosling", "language": "英语", "genre": "Folk", "request_tier": "免费", "remark": "爱乐之城" },
+  { "title": "夜空中最亮的星", "artist": "逃跑计划", "language": "国语", "genre": "Rock", "request_tier": "免费", "remark": "治愈系" },
+  { "title": "idol", "artist": "YOASOBI", "language": "日语", "genre": "ACG", "request_tier": "付费", "remark": "我推的孩子 OP" },
+  { "title": "First Love", "artist": "宇多田光", "language": "日语", "genre": "R&B", "request_tier": "舰长专属", "remark": "经典抒情" }
+]
