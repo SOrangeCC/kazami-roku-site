@@ -78,27 +78,6 @@ export function GalleryGrid() {
                 <span>大图</span>
               </span>
             </div>
-
-            <div className="flex items-center justify-between gap-2 px-4 py-3 text-xs">
-              <div className="min-w-0">
-                <div className="truncate font-semibold text-ink">
-                  {item.title}
-                </div>
-                <div className="truncate text-secondary">@{item.authorName}</div>
-              </div>
-
-              {item.sourceUrl && (
-                <a
-                  href={item.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex shrink-0 items-center gap-1 text-primary hover:underline"
-                >
-                  <span>原链</span>
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              )}
-            </div>
           </div>
         ))}
       </div>

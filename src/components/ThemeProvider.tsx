@@ -18,10 +18,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
     const saved = localStorage.getItem("roku-theme") as Theme | null;
-    const initial: Theme = saved === "dark" ? "dark" : "light";
+    const initial: Theme =
+      saved === "dark" || saved === "light"
+        ? saved
+        : media.matches
+          ? "dark"
+          : "light";
     setTheme(initial);
     document.documentElement.setAttribute("data-theme", initial);
+
+    const onSystemChange = (e: MediaQueryListEvent) => {
+      if (!localStorage.getItem("roku-theme")) {
+        const next: Theme = e.matches ? "dark" : "light";
+        setTheme(next);
+        document.documentElement.setAttribute("data-theme", next);
+      }
+    };
+    media.addEventListener("change", onSystemChange);
+    return () => media.removeEventListener("change", onSystemChange);
   }, []);
 
   const toggleTheme = () => {
