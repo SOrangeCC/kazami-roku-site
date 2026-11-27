@@ -21,14 +21,24 @@ export default function SongsPage() {
             </div>
           </div>
 
-          <a
-            href={SITE_CONFIG.starbotUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-frost px-3.5 py-1.5 text-xs font-medium text-primary hover:border-highlight"
-          >
-            打开 StarBot 原页
-          </a>
+          <div className="flex flex-wrap items-center gap-2">
+            <a
+              href={SITE_CONFIG.clipsCollectionUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-ribbon px-3.5 py-1.5 text-xs font-semibold text-primary shadow-sm transition hover:opacity-90"
+            >
+              B 站歌切合集
+            </a>
+            <a
+              href={SITE_CONFIG.starbotUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-frost px-3.5 py-1.5 text-xs font-medium text-primary hover:border-highlight"
+            >
+              打开 StarBot 原页
+            </a>
+          </div>
         </div>
       </div>
 

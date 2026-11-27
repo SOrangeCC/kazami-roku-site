@@ -15,7 +15,9 @@
     "sync:songs": "tsx scripts/sync-starbot-songs.ts",
     "sync:stats": "tsx scripts/sync-danmakus-stats.ts",
     "sync:creations": "tsx scripts/sync-fan-creations.ts",
-    "sync:vstock": "tsx scripts/sync-vstock.ts"
+    "sync:vstock": "tsx scripts/sync-vstock.ts",
+    "sync:clips": "tsx scripts/sync-song-clips.ts",
+    "push:schedule": "tsx scripts/local-push-schedule.ts"
   },
   "dependencies": {
     "better-sqlite3": "^11.8.1",

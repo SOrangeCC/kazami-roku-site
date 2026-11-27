@@ -10,6 +10,7 @@ import {
   Check,
   Sparkles,
   RotateCcw,
+  ExternalLink,
 } from "lucide-react";
 import { usePlayerStore, PlayerClip } from "@/store/playerStore";
 
@@ -364,31 +365,48 @@ export function SongTable() {
                           <Copy className="h-3 w-3" />
                           <span>点歌</span>
                         </button>
-                        <button
-                          type="button"
-                          disabled={!canPlayClip}
-                          onClick={() => {
-                            if (song.primaryClip) {
-                              play(
-                                {
-                                  id: song.id,
-                                  title: song.title,
-                                  artist: song.artist,
-                                },
-                                song.primaryClip
-                              );
-                            }
-                          }}
-                          title={canPlayClip ? "播放歌切" : "歌切待补充"}
-                          className={`inline-flex items-center justify-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition ${
-                            canPlayClip
-                              ? "bg-primary text-white hover:opacity-90"
-                              : "cursor-not-allowed border border-frost bg-hair text-secondary/50"
-                          }`}
-                        >
-                          <Play className="h-3 w-3" />
-                          <span>{canPlayClip ? "试听" : "待补充"}</span>
-                        </button>
+                        {canPlayClip &&
+                        song.primaryClip?.sourceType === "bilibili_bv" &&
+                        song.primaryClip.bvid ? (
+                          <a
+                            href={`https://www.bilibili.com/video/${song.primaryClip.bvid}?p=${
+                              song.primaryClip.page || 1
+                            }&t=${song.primaryClip.startSec || 0}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={song.primaryClip.title || "打开 B 站歌切视频"}
+                            className="inline-flex items-center justify-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            <span>B站歌切</span>
+                          </a>
+                        ) : (
+                          <button
+                            type="button"
+                            disabled={!canPlayClip}
+                            onClick={() => {
+                              if (song.primaryClip) {
+                                play(
+                                  {
+                                    id: song.id,
+                                    title: song.title,
+                                    artist: song.artist,
+                                  },
+                                  song.primaryClip
+                                );
+                              }
+                            }}
+                            title={canPlayClip ? "播放歌切" : "歌切待补充"}
+                            className={`inline-flex items-center justify-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition ${
+                              canPlayClip
+                                ? "bg-primary text-white hover:opacity-90"
+                                : "cursor-not-allowed border border-frost bg-hair text-secondary/50"
+                            }`}
+                          >
+                            <Play className="h-3 w-3" />
+                            <span>{canPlayClip ? "试听" : "待补充"}</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -469,31 +487,48 @@ export function SongTable() {
                               <span>点歌</span>
                             </button>
 
-                            <button
-                              type="button"
-                              disabled={!canPlayClip}
-                              onClick={() => {
-                                if (song.primaryClip) {
-                                  play(
-                                    {
-                                      id: song.id,
-                                      title: song.title,
-                                      artist: song.artist,
-                                    },
-                                    song.primaryClip
-                                  );
-                                }
-                              }}
-                              title={canPlayClip ? "播放歌切" : "歌切待补充"}
-                              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition ${
-                                canPlayClip
-                                  ? "bg-primary text-white hover:opacity-90"
-                                  : "cursor-not-allowed border border-frost bg-hair text-secondary/50"
-                              }`}
-                            >
-                              <Play className="h-3 w-3" />
-                              <span>{canPlayClip ? "试听" : "待补充"}</span>
-                            </button>
+                            {canPlayClip &&
+                            song.primaryClip?.sourceType === "bilibili_bv" &&
+                            song.primaryClip.bvid ? (
+                              <a
+                                href={`https://www.bilibili.com/video/${song.primaryClip.bvid}?p=${
+                                  song.primaryClip.page || 1
+                                }&t=${song.primaryClip.startSec || 0}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={song.primaryClip.title || "打开 B 站歌切视频"}
+                                className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-xs font-medium text-white transition hover:opacity-90"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                                <span>B站歌切</span>
+                              </a>
+                            ) : (
+                              <button
+                                type="button"
+                                disabled={!canPlayClip}
+                                onClick={() => {
+                                  if (song.primaryClip) {
+                                    play(
+                                      {
+                                        id: song.id,
+                                        title: song.title,
+                                        artist: song.artist,
+                                      },
+                                      song.primaryClip
+                                    );
+                                  }
+                                }}
+                                title={canPlayClip ? "播放歌切" : "歌切待补充"}
+                                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition ${
+                                  canPlayClip
+                                    ? "bg-primary text-white hover:opacity-90"
+                                    : "cursor-not-allowed border border-frost bg-hair text-secondary/50"
+                                }`}
+                              >
+                                <Play className="h-3 w-3" />
+                                <span>{canPlayClip ? "试听" : "待补充"}</span>
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>

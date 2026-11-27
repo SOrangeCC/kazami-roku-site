@@ -10,4 +10,5 @@ export const SITE_CONFIG = {
   liveUrl: "https://live.bilibili.com/1773504762",
   starbotUrl: "https://bot.starlwr.com/songlist?uid=3546689960938016",
   danmakusUrl: "https://danmakus.com/channel/3546689960938016",
+  clipsCollectionUrl: "https://space.bilibili.com/661491085/lists/9529536?type=season",
 } as const;

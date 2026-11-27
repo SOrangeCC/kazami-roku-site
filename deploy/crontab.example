@@ -7,8 +7,8 @@
 # 每 6 小时同步周表动态
 0 */6 * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-weekly-schedule.ts >> /var/log/roku-sync.log 2>&1
 
-# 每 12 小时同步二创聚合
-30 */12 * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-fan-creations.ts >> /var/log/roku-sync.log 2>&1
+# 每 12 小时同步二创聚合与歌切合集
+30 */12 * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-fan-creations.ts && docker compose exec -T app npx tsx scripts/sync-song-clips.ts >> /var/log/roku-sync.log 2>&1
 
 # 每日 04:00 同步 StarBot 歌单与 Danmakus 直播统计
 0 4 * * * cd /opt/kazami-roku-site && docker compose exec -T app npx tsx scripts/sync-starbot-songs.ts && docker compose exec -T app npx tsx scripts/sync-danmakus-stats.ts >> /var/log/roku-sync.log 2>&1
