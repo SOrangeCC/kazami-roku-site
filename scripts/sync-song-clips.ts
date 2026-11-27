@@ -5,6 +5,8 @@ import { fetchWithRetry } from "../src/lib/bilibili";
 
 const SEASON_MID = "661491085";
 const SEASON_ID = "9529536";
+// Non-song-clip fan creations in the season that should stay in /creations rather than /songs
+const EXCLUDED_CLIP_BVIDS = new Set(["BV18fs261ETH"]);
 
 interface SeasonArchive {
   bvid: string;
@@ -121,6 +123,10 @@ async function main() {
   let unmatched = 0;
 
   for (const arc of archives) {
+    if (EXCLUDED_CLIP_BVIDS.has(arc.bvid)) {
+      console.log(`[sync-song-clips] Skipped excluded fan-creation ${arc.bvid}`);
+      continue;
+    }
     let matched = findMatchingSong(arc.title, allSongs);
     if (!matched) {
       const fallbackTitle = cleanDisplayTitle(arc.title) || arc.title;
