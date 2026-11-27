@@ -8,6 +8,7 @@ import {
   BarChart3,
   Home,
   Image as ImageIcon,
+  Smile,
 } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import { ThemeToggle } from "./ThemeToggle";
@@ -16,6 +17,7 @@ const NAV_ITEMS = [
   { href: "/", label: "首页", shortLabel: "首页", icon: Home },
   { href: "/songs", label: "歌单", shortLabel: "歌单", icon: Music },
   { href: "/gallery", label: "美图", shortLabel: "美图", icon: ImageIcon },
+  { href: "/stickers", label: "表情", shortLabel: "表情", icon: Smile },
   { href: "/creations", label: "二创", shortLabel: "二创", icon: Sparkles },
   { href: "/stats", label: "直播数据", shortLabel: "数据", icon: BarChart3 },
 ];
