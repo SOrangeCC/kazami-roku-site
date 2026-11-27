@@ -1,7 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  ListObjectsV2Command,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export interface StorageProvider {
@@ -27,7 +31,8 @@ function getR2Config() {
   const accountId = process.env.R2_ACCOUNT_ID?.trim();
   const accessKeyId = process.env.R2_ACCESS_KEY_ID?.trim();
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY?.trim();
-  const bucket = process.env.R2_BUCKET?.trim();
+  const bucket =
+    process.env.R2_BUCKET_NAME?.trim() || process.env.R2_BUCKET?.trim();
   const publicUrl = process.env.R2_PUBLIC_URL?.trim()?.replace(/\/+$/, "");
 
   if (!accountId || !accessKeyId || !secretAccessKey || !bucket) {
@@ -35,6 +40,53 @@ function getR2Config() {
   }
 
   return { accountId, accessKeyId, secretAccessKey, bucket, publicUrl };
+}
+
+const R2_LIST_TTL_MS = 5 * 60 * 1000;
+const r2ListCache = new Map<string, { expiresAt: number; keys: string[] }>();
+
+export function encodeR2KeyPath(key: string): string {
+  return key
+    .split("/")
+    .map((seg) => encodeURIComponent(seg))
+    .join("/");
+}
+
+export async function listR2Objects(
+  prefix: string
+): Promise<{ publicUrl: string; keys: string[] } | null> {
+  const r2 = getR2Config();
+  if (!r2 || !r2.publicUrl) return null;
+
+  const now = Date.now();
+  const cached = r2ListCache.get(prefix);
+  if (cached && cached.expiresAt > now) {
+    return { publicUrl: r2.publicUrl, keys: cached.keys };
+  }
+
+  const client = createR2Client(r2);
+  const keys: string[] = [];
+  let continuationToken: string | undefined;
+
+  do {
+    const res = await client.send(
+      new ListObjectsV2Command({
+        Bucket: r2.bucket,
+        Prefix: prefix,
+        ContinuationToken: continuationToken,
+      })
+    );
+    for (const obj of res.Contents || []) {
+      if (obj.Key && !obj.Key.endsWith("/")) {
+        keys.push(obj.Key);
+      }
+    }
+    continuationToken = res.IsTruncated ? res.NextContinuationToken : undefined;
+  } while (continuationToken);
+
+  keys.sort();
+  r2ListCache.set(prefix, { expiresAt: now + R2_LIST_TTL_MS, keys });
+  return { publicUrl: r2.publicUrl, keys };
 }
 
 function createR2Client(cfg: NonNullable<ReturnType<typeof getR2Config>>) {

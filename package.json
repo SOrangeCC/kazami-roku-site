@@ -20,6 +20,8 @@
     "push:schedule": "tsx scripts/local-push-schedule.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.750.0",
+    "@aws-sdk/s3-request-presigner": "^3.750.0",
     "better-sqlite3": "^11.8.1",
     "drizzle-orm": "^0.40.0",
     "lucide-react": "^0.475.0",
@@ -29,8 +31,6 @@
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.750.0",
-    "@aws-sdk/s3-request-presigner": "^3.750.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.13.0",
     "@types/react": "^19.0.8",

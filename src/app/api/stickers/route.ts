@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
+import { encodeR2KeyPath, listR2Objects } from "@/lib/storage";
 
 export const dynamic = "force-dynamic";
 
@@ -15,8 +16,26 @@ export interface StickerItem {
 
 export async function GET() {
   const items: StickerItem[] = [];
-  const stickersDir = path.resolve(process.cwd(), "public/images/stickers");
 
+  const r2Result = await listR2Objects("stickers/").catch(() => null);
+  if (r2Result) {
+    const validKeys = r2Result.keys.filter((key) =>
+      ALLOWED_EXTS.has(path.posix.extname(key).toLowerCase())
+    );
+    for (let i = 0; i < validKeys.length; i += 1) {
+      const key = validKeys[i];
+      const filename = path.posix.basename(key);
+      items.push({
+        id: `sticker-${i + 1}`,
+        title: `风见ロク 表情 #${i + 1}`,
+        imageUrl: `${r2Result.publicUrl}/${encodeR2KeyPath(key)}`,
+        filename,
+      });
+    }
+    return NextResponse.json({ items });
+  }
+
+  const stickersDir = path.resolve(process.cwd(), "public/images/stickers");
   if (fs.existsSync(stickersDir)) {
     const entries = fs.readdirSync(stickersDir, { withFileTypes: true });
     const files = entries

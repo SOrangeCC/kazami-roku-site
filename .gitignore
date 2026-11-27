@@ -31,3 +31,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# R2-hosted media (keep .gitkeep)
+public/images/gallery/*
+!public/images/gallery/.gitkeep
+public/images/stickers/*
+!public/images/stickers/.gitkeep
